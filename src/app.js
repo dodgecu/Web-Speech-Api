@@ -4,6 +4,7 @@
  */
 const synth = window.speechSynthesis;
 
+// Check browser support
 window.SpeechRecognition =
   window.webkitSpeechRecognition || window.SpeechRecognition;
 
@@ -18,24 +19,29 @@ if (!("SpeechRecognition" || "speechSynthesis" in window)) {
     rateValue = document.querySelector("#rate-value"),
     pitch = document.querySelector("#pitch"),
     pitchValue = document.querySelector("#pitch-value"),
+    speakBtn = document.querySelector(".speak-btn"),
     startRec = document.querySelector(".start-speech"),
     stopRec = document.querySelector(".stop-speech"),
     body = document.querySelector("body");
 
   // Init voices array
   let voices = [];
-
-  const getVoices = () => {
+  function getVoices() {
     voices = synth.getVoices();
     voices.map(voice => {
       const option = document.createElement("option");
-      option.textContent = `${voice.name} ( ${voice.lang})`;
+      option.textContent = `${voice.name
+        .split(" ")
+        .filter((el, i) => i !== 0)
+        .join(" ")
+        .replace(/^\w/, c => c.toUpperCase())} ${voice.lang}`;
       option.setAttribute("data-lang", voice.lang);
       option.setAttribute("data-name", voice.name);
       voiceSelect.appendChild(option);
     });
-  };
+  }
 
+  // Asynchronous voices array request: https://stackoverflow.com/questions/49506716/speechsynthesis-getvoices-returns-empty-array-on-windows
   getVoices();
 
   if (synth.onvoiceschanged !== undefined) {
@@ -43,7 +49,7 @@ if (!("SpeechRecognition" || "speechSynthesis" in window)) {
   }
 
   // Speak
-  const speak = () => {
+  function speak() {
     if (synth.speaking) {
       console.error("Speaking...");
       return;
@@ -84,7 +90,7 @@ if (!("SpeechRecognition" || "speechSynthesis" in window)) {
 
       synth.speak(speakText);
     }
-  };
+  }
 
   // Event Listeners
   textForm.addEventListener("submit", e => {
@@ -108,8 +114,10 @@ if (!("SpeechRecognition" || "speechSynthesis" in window)) {
    *
    */
 
-  // Recognition vars
+  // Init recognition object
   const recognition = new window.SpeechRecognition();
+
+  // Recognition params
   recognition.interimResults = true;
   recognition.maxAlternatives = 10;
   recognition.continuous = true;
@@ -117,13 +125,29 @@ if (!("SpeechRecognition" || "speechSynthesis" in window)) {
   recognition.onresult = event =>
     (textInput.innerHTML = event.results[0][0].transcript);
 
-  startRec.addEventListener("click", startRecording);
-  stopRec.addEventListener("click", stopRecording);
+  // Recognition event listeners
 
   function startRecording() {
+    voiceSelect.setAttribute("disabled", "");
+    textInput.setAttribute("disabled", "");
+    speakBtn.setAttribute("disabled", "");
+    rate.setAttribute("disabled", "");
+    pitch.setAttribute("disabled", "");
+    body.style.background = "#000 url(/img/rec.gif)";
+    body.style.backgroundSize = "cover";
+    body.style.backgroundRepeat = "no-repeat";
+    body.style.backgroundPosition = "center";
     recognition.start();
   }
   function stopRecording() {
+    textInput.removeAttribute("disabled");
+    voiceSelect.removeAttribute("disabled");
+    speakBtn.removeAttribute("disabled");
+    rate.removeAttribute("disabled");
+    pitch.removeAttribute("disabled");
+    body.style.background = "#000";
     recognition.stop();
   }
+  startRec.addEventListener("click", startRecording);
+  stopRec.addEventListener("click", stopRecording);
 }
