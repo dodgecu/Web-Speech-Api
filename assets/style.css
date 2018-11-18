@@ -1,6 +1,10 @@
 body {
-  background: #141414;
+  background: #000;
 }
 .logo {
   max-width: 20%;
+}
+
+.fa {
+  font-size: 25px;
 }

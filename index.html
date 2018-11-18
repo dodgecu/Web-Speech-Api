@@ -10,6 +10,7 @@
       integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
       crossorigin="anonymous"
     />
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="assets/style.css" />
     <title>Text To Speech</title>
   </head>
@@ -19,9 +20,11 @@
           <img src="img/speech.png" alt="" class="mb-5 logo">
           <div class="row">
             <div class="col-md-6 mx-auto">
+                <button class="start-speech btn btn-primary mb-3"><i class="fa fa-microphone"></i></button>
+                <button class="stop-speech btn btn-primary mb-3"><i class="fa fa-stop-circle"></i></button>
               <form class="mb-5">
                 <div class="form-group">
-                  <textarea name="" id="text-input" class="form-control form-control-lg" placeholder="Type anything..."></textarea>
+                  <textarea name="" id="text-input" class="form-control form-control-lg" placeholder="Type or say anything..."></textarea>
                 </div>
                 <div class="form-group">
                   <label for="rate">Rate</label>
