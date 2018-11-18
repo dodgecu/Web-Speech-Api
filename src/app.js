@@ -20,8 +20,7 @@ if (!("SpeechRecognition" || "speechSynthesis" in window)) {
     pitch = document.querySelector("#pitch"),
     pitchValue = document.querySelector("#pitch-value"),
     speakBtn = document.querySelector(".speak-btn"),
-    startRec = document.querySelector(".start-speech"),
-    stopRec = document.querySelector(".stop-speech"),
+    rec = document.querySelector(".start-speech"),
     body = document.querySelector("body");
 
   // Init voices array
@@ -56,7 +55,7 @@ if (!("SpeechRecognition" || "speechSynthesis" in window)) {
     }
     if (textInput.value !== "") {
       // Get Speech from text area
-      body.style.background = "#141414 url(/img/wave.gif)";
+      body.style.background = "#000 url(/img/wave.gif)";
       body.style.backgroundSize = "contain";
       body.style.backgroundRepeat = "no-repeat";
       const speakText = new SpeechSynthesisUtterance(textInput.value);
@@ -114,40 +113,51 @@ if (!("SpeechRecognition" || "speechSynthesis" in window)) {
    *
    */
 
-  // Init recognition object
   const recognition = new window.SpeechRecognition();
 
   // Recognition params
+
+  let state = false;
+  let finalTranscript = "";
   recognition.interimResults = true;
   recognition.maxAlternatives = 10;
   recognition.continuous = true;
-  recognition.lang = "en-US";
-  recognition.onresult = event =>
-    (textInput.innerHTML = event.results[0][0].transcript);
+  recognition.onresult = event => {
+    let interimTranscript = "";
+    for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
+      let transcript = event.results[i][0].transcript;
+      event.results[i].isFinal
+        ? (finalTranscript += transcript)
+        : (interimTranscript += transcript);
+      textInput.innerHTML = finalTranscript + interimTranscript;
+    }
+  };
 
   // Recognition event listeners
+  function record() {
+    if (state) {
+      recognition.stop();
+      state = false;
+      rec.innerHTML = `<i class="fa fa-microphone"></i>`;
+      voiceSelect.removeAttribute("disabled");
+      speakBtn.removeAttribute("disabled");
+      rate.removeAttribute("disabled");
+      pitch.removeAttribute("disabled");
+      body.style.background = "#000";
+    } else {
+      recognition.start();
+      state = true;
+      rec.innerHTML = `<i class="fa fa-stop-circle-o "></i>`;
+      voiceSelect.setAttribute("disabled", "");
+      speakBtn.setAttribute("disabled", "");
+      rate.setAttribute("disabled", "");
+      pitch.setAttribute("disabled", "");
+      body.style.background = "#000 url(/img/rec.gif)";
+      body.style.backgroundSize = "cover";
+      body.style.backgroundRepeat = "no-repeat";
+      body.style.backgroundPosition = "center";
+    }
+  }
 
-  function startRecording() {
-    voiceSelect.setAttribute("disabled", "");
-    textInput.setAttribute("disabled", "");
-    speakBtn.setAttribute("disabled", "");
-    rate.setAttribute("disabled", "");
-    pitch.setAttribute("disabled", "");
-    body.style.background = "#000 url(/img/rec.gif)";
-    body.style.backgroundSize = "cover";
-    body.style.backgroundRepeat = "no-repeat";
-    body.style.backgroundPosition = "center";
-    recognition.start();
-  }
-  function stopRecording() {
-    textInput.removeAttribute("disabled");
-    voiceSelect.removeAttribute("disabled");
-    speakBtn.removeAttribute("disabled");
-    rate.removeAttribute("disabled");
-    pitch.removeAttribute("disabled");
-    body.style.background = "#000";
-    recognition.stop();
-  }
-  startRec.addEventListener("click", startRecording);
-  stopRec.addEventListener("click", stopRecording);
+  rec.addEventListener("click", record);
 }
