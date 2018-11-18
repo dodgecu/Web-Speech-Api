@@ -4,4 +4,5 @@ A small app based on "Text To Speech" api https://developer.mozilla.org/en-US/do
 
 # App demo
 
-http://biz211.inmotionhosting.com/~fading8/voice/index.html
+Works only on Chrome over https
+https://biz211.inmotionhosting.com/~fading8/voice/index.html

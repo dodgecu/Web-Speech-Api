@@ -7,22 +7,30 @@ const synth = window.speechSynthesis;
 // Check browser support
 window.SpeechRecognition =
   window.webkitSpeechRecognition || window.SpeechRecognition;
+// Global DOM vars
+const textForm = document.querySelector("form"),
+  textInput = document.querySelector("#text-input"),
+  voiceSelect = document.querySelector("#voice-select"),
+  rate = document.querySelector("#rate"),
+  rateValue = document.querySelector("#rate-value"),
+  pitch = document.querySelector("#pitch"),
+  pitchValue = document.querySelector("#pitch-value"),
+  speakBtn = document.querySelector(".speak-btn"),
+  rec = document.querySelector(".start-speech"),
+  body = document.querySelector("body");
 
-if (!("SpeechRecognition" || "speechSynthesis" in window)) {
+if (!("webkitSpeechRecognition" in window)) {
   console.log("API not supported by your web browser");
+  const div = document.createElement("div");
+  div.innerHTML = `<h3 class = "text-center">Unfortunately, your web browser does not support this feature. Please, use the latest Chrome browser</h3>`;
+  body.appendChild(div);
+  voiceSelect.setAttribute("disabled", "");
+  speakBtn.setAttribute("disabled", "");
+  rate.setAttribute("disabled", "");
+  pitch.setAttribute("disabled", "");
+  textInput.setAttribute("disabled", "");
+  rec.setAttribute("disabled", "");
 } else {
-  // Global DOM vars
-  const textForm = document.querySelector("form"),
-    textInput = document.querySelector("#text-input"),
-    voiceSelect = document.querySelector("#voice-select"),
-    rate = document.querySelector("#rate"),
-    rateValue = document.querySelector("#rate-value"),
-    pitch = document.querySelector("#pitch"),
-    pitchValue = document.querySelector("#pitch-value"),
-    speakBtn = document.querySelector(".speak-btn"),
-    rec = document.querySelector(".start-speech"),
-    body = document.querySelector("body");
-
   // Init voices array
   let voices = [];
   function getVoices() {
